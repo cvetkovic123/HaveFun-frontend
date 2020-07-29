@@ -1,5 +1,5 @@
 import { NgModule } from '@angular/core';
-import { Routes, RouterModule, Router } from '@angular/router';
+import { Routes, RouterModule } from '@angular/router';
 import { PostsComponent } from './posts.component';
 import { PopularComponent } from './popular/popular.component';
 import { TrendingComponent } from './trending/trending.component';
@@ -11,7 +11,7 @@ const routes: Routes = [
         { path: 'trending', component: TrendingComponent },
         { path: 'fresh', component: FreshComponent}
     ]}
-]
+];
 
 @NgModule({
     imports: [RouterModule.forChild(routes)],

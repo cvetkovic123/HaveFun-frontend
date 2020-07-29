@@ -4,11 +4,19 @@ import { SharedModule } from '../shared/shared.module';
 import { PopularComponent } from './popular/popular.component';
 import { TrendingComponent } from './trending/trending.component';
 import { FreshComponent } from './fresh/fresh.component';
+import { PostsComponent } from './posts.component';
+import { ReactiveFormsModule } from '@angular/forms';
 
 @NgModule({
-    declarations: [PopularComponent, TrendingComponent, FreshComponent],
+    declarations: [
+        PostsComponent,
+        PopularComponent,
+        TrendingComponent,
+        FreshComponent
+    ],
     imports: [
         SharedModule,
+        ReactiveFormsModule,
         PostsRouterModule
     ]
 })

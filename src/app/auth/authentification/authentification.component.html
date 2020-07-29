@@ -1,0 +1,127 @@
+<div class="page-header" style="background-image: url('../../assets/paperKit2/assets/img/login-image.jpg');">
+    <div class="filter"></div>
+    <div class="container">
+      <div class="row">
+        <div class="col-lg-4 ml-auto mr-auto">
+          <div class="card card-register">
+            <h3 style="color: black" class="title mx-auto">Welcome</h3>
+            <div class="social-line text-center">
+              <a href="#pablo" class="btn btn-neutral btn-facebook btn-just-icon">
+                <i class="fa fa-facebook-square"></i>
+              </a>
+              <a href="#pablo" class="btn btn-neutral btn-google btn-just-icon">
+                <i class="fa fa-google"></i>
+              </a>
+              <a href="#pablo" class="btn btn-neutral btn-twitter btn-just-icon">
+                <i class="fa fa-twitter"></i>
+              </a>
+            </div>
+            <div
+                *ngIf="error" 
+                class="alert alert-danger" 
+                role="alert">
+                <p class="responseMessage">{{ error }}</p>
+              </div>
+              <div
+              *ngIf="success" 
+              class="alert alert-success" 
+              role="alert">
+              <p class="responseMessage">{{ success }}</p>
+            </div>
+            <form 
+                #authForm="ngForm"
+                class="register-form"
+                (ngSubmit)="onSubmit(authForm)">
+
+                <div class="form-group" *ngIf="!isLoginMode">
+                    <label>Name:</label>
+                    <input 
+                        type="text"
+                        id="name"
+                        [(ngModel)]="user.name"
+                        name="name" 
+                        required
+                        #name="ngModel"
+                        class="form-control"
+                        placeholder="Name">
+                        <span
+                            *ngIf="!name.valid && name.touched ">
+                            Please enter a name!</span>
+                    </div>
+
+                <div class="form-group">
+                    <label>Email:</label>
+                    <input 
+                        type="email"
+                        id="email"
+                        [(ngModel)]="user.email"
+                        name="email" 
+                        required
+                        email
+                        #email="ngModel"
+                        class="form-control"
+                        placeholder="Email">
+                        <span
+                            *ngIf="!email.valid && email.touched">
+                            Please enter a valid email!</span>
+                </div>
+
+                <div class="form-group">
+                    <label>Password:</label>
+                    <input 
+                        type="password" 
+                        id="password"
+                        name="password"
+                        [(ngModel)]="user.password"
+                        required
+                        #password="ngModel"
+                        class="form-control" 
+                        placeholder="Password">
+                        <span
+                            class="help-block"
+                            *ngIf="password.touched && password.invalid">
+                            Password is required!</span>
+                </div>
+
+                <div class="form-group" *ngIf="!isLoginMode">
+                    <label>Confirm Password</label>
+                    <input 
+                        type="password"
+                        id="confirmPassword"
+                        class="form-control"
+                        name="confirmPassword"
+                        [(ngModel)]="user.confirmPassword"
+                        appConfirmEqualValidator="password"
+                        confirmPassword
+                        required
+                        #confirmPassword="ngModel"
+                        placeholder="Confirm Password">
+                        <span 
+                            class="help-block"
+                            *ngIf="confirmPassword.touched && confirmPassword.errors?.required">
+                            Confirm password is required!</span>
+                        <span
+                            class="help-block"
+                            *ngIf="
+                                confirmPassword.touched && 
+                                confirmPassword.errors?.notEqual &&
+                                !confirmPassword.errors?.required ">
+                            Passwords do not match!</span>
+                </div>
+                <button
+                    [disabled]="!authForm.valid" 
+                    class="btn btn-danger btn-block btn-round">{{ isLoginMode ? 'Login' : 'Register'}}
+                </button>
+              <button 
+                type="button"
+                (click)="onSwitchMode(authForm)"
+                class="btn btn-danger btn-block btn-round">Switch to {{isLoginMode ? 'Register' : 'Login'}}
+                
+            </button>
+
+            </form>
+            <div *ngIf="isLoginMode" class="forgot">
+              <a href="#" class="btn btn-link btn-danger">Forgot password?</a>
+            </div>
+          </div>
+        </div>
