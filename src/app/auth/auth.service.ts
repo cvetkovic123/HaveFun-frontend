@@ -58,6 +58,7 @@ export class AuthService {
 
 
     private handleError(errorResponse: HttpErrorResponse) {
+        console.log('errorResponse', errorResponse);
         let errorMessage = 'An unknown error occured';
 
         if (errorResponse.error.startsWith('<!DOCTYPE')) {
@@ -94,14 +95,15 @@ export class AuthService {
             expirationDate
         );
         this.user.next(user);
-        this.autLogout(decodedToken.exp * 1000);
+        this.autoLogout(decodedToken.exp);
         localStorage.setItem('userData', JSON.stringify(user));
     }
 
-    public autLogout(expirationDuration: number) {
+    public autoLogout(expirationDuration: number) {
+        console.log('expirationDuration', expirationDuration);
         this.tokenExpirationTimer = setTimeout(() => {
             this.logout();
-        }, expirationDuration);
+        }, expirationDuration - Date.now());
     }
 
     public logout(): void {
@@ -111,6 +113,7 @@ export class AuthService {
         if (this.tokenExpirationTimer) {
             clearTimeout(this.tokenExpirationTimer);
         }
+        this.tokenExpirationTimer = null;
     }
 
     public autoLogin(): void {
@@ -121,6 +124,9 @@ export class AuthService {
             _token: string,
             _tokenExpirationDate: string
         } = JSON.parse(localStorage.getItem('userData'));
+        if (!userData) {
+            return;
+        }
 
         const loadedUser = new User(
             userData.iss,
@@ -132,7 +138,7 @@ export class AuthService {
         if (loadedUser._token) {
             this.user.next(loadedUser);
             const expirationDuration = new Date(userData._tokenExpirationDate).getTime() - new Date().getTime();
-            this.autLogout(expirationDuration);
+            this.autoLogout(expirationDuration);
         }
     }
 
