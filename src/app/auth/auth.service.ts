@@ -1,22 +1,31 @@
 import { Injectable } from '@angular/core';
-import { HttpClient, HttpErrorResponse, HttpHeaders } from '@angular/common/http';
+import { HttpClient, HttpErrorResponse, HttpHeaders, HttpParams, HttpRequest } from '@angular/common/http';
 import { catchError, tap } from 'rxjs/operators';
-import { throwError, BehaviorSubject } from 'rxjs';
+import { throwError, BehaviorSubject, Observable } from 'rxjs';
 import { User } from './user.model';
 import * as jwt_decode from 'jwt-decode';
 import { Router } from '@angular/router';
+import { ProfileImage } from './profileImage.model';
+import { environment } from 'src/environments/environment';
+
 
 @Injectable({
     providedIn: 'root'
 })
 export class AuthService {
     public user = new BehaviorSubject<User>(null);
+    public profileImage = new BehaviorSubject<ProfileImage>(null);
+    public noAvatar = '../../assets/paperKit2/assets/img/no-avatar.jpg';
     private tokenExpirationTimer: any;
     private errorEmailCatcher = {};
     constructor(private http: HttpClient, private router: Router) {}
 
-    public signUp(name: string, email: string, password: string) {
-        return this.http.post('http://localhost:3300/users/signUp',
+    public signUp(
+        name: string,
+        email: string,
+        password: string): Observable<object> {
+
+        return this.http.post( environment.api_key + '/users/signUp',
         {
             name,
             email,
@@ -29,8 +38,8 @@ export class AuthService {
         );
     }
 
-    public signIn(email: string, password: string) {
-        return this.http.post('http://localhost:3300/users/signIn',
+    public signIn(email: string, password: string): Observable<object> {
+        return this.http.post(environment.api_key + '/users/signIn',
         {
             email,
             password,
@@ -42,24 +51,70 @@ export class AuthService {
         );
     }
 
-    public emailVerification(token: string) {
+    public emailVerification(token: string): Observable<object> {
         return this.http.get(
-            'http://localhost:3300/users/emailVerification',
+            environment.api_key + '/users/emailVerification',
             {
                 headers: new HttpHeaders({authentification: token})
             })
             .pipe(
-                catchError(this.handleError),
-                tap((resData) => {
-                })
+                catchError(this.handleError)
             );
     }
 
 
+    public uploadProfileImage(file: File, title: string, token: string) {
+        const uploadImageData = new FormData();
+        const headers = new HttpHeaders();
+        headers.append('Content-Type', 'application/json');
+        uploadImageData.append('image', file, title);
+        return this.http.post(
+            environment.api_key + '/users/imageUpload',
+                uploadImageData,
+            {
+                headers: new HttpHeaders({
+                    authorization: token,
+
+                })
+            }
+        ).pipe(
+            catchError(this.handleError)
+        );
+    }
+
+    public getProfileImage(token: string) {
+        return this.http.get(
+            environment.api_key + '/users/getProfileImage',
+            {
+                headers: new HttpHeaders({
+                    authorization: token
+                })
+            }
+        ).subscribe((result) => {
+            this.profileImage.next((result as any).message);
+          });
+    }
+
+    public resendEmail(email: string, password: string) {
+        return this.http.post(
+            environment.api_key + '/users/resendEmailVerification',
+            {
+                email,
+                password
+            }
+        ).pipe(
+            catchError(this.handleError)
+        );
+    }
+
 
     private handleError(errorResponse: HttpErrorResponse) {
-        console.log('errorResponse', errorResponse);
+        // console.log('error', errorResponse.error);
         let errorMessage = 'An unknown error occured';
+        // if (errorResponse.message.startsWith('Http failure response')) {
+        //     errorMessage = 'Backend not connected';
+        //     return throwError(errorMessage);
+        // }
 
         if (errorResponse.error.startsWith('<!DOCTYPE')) {
             const paragraph = errorResponse.error;
@@ -75,7 +130,7 @@ export class AuthService {
                 errorMessage = 'This email does not exist!';
                 break;
             case 'Unauthorized':
-                errorMessage = 'This email was not registered or the   password is incorrect!';
+                errorMessage = 'This email was not registered or the password is incorrect!';
                 break;
         }
         if (this.errorEmailCatcher) {
@@ -90,6 +145,7 @@ export class AuthService {
         const user = new User(
             decodedToken.iss,
             decodedToken.sub,
+            decodedToken.name,
             decodedToken.email,
             token,
             expirationDate
@@ -100,7 +156,6 @@ export class AuthService {
     }
 
     public autoLogout(expirationDuration: number) {
-        console.log('expirationDuration', expirationDuration);
         this.tokenExpirationTimer = setTimeout(() => {
             this.logout();
         }, expirationDuration - Date.now());
@@ -108,7 +163,8 @@ export class AuthService {
 
     public logout(): void {
         this.user.next(null);
-        this.router.navigate(['auth']);
+        this.profileImage.next(null);
+        this.router.navigate(['/auth']);
         localStorage.removeItem('userData');
         if (this.tokenExpirationTimer) {
             clearTimeout(this.tokenExpirationTimer);
@@ -120,6 +176,7 @@ export class AuthService {
         const userData: {
             iss: string,
             sub: string,
+            name: string
             email: string,
             _token: string,
             _tokenExpirationDate: string
@@ -131,6 +188,7 @@ export class AuthService {
         const loadedUser = new User(
             userData.iss,
             userData.sub,
+            userData.name,
             userData.email,
             userData._token,
             new Date(userData._tokenExpirationDate));

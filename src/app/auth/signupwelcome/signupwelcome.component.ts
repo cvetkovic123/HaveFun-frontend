@@ -8,10 +8,10 @@ import { AuthService } from '../auth.service';
     styleUrls: ['./signupwelcome.component.scss']
 })
 export class SignUpWelcomeComponent implements OnInit {
-    private success: string;
-    private error: string;
-    private accountActivated = false;
-    private token: string;
+    public success: string;
+    public error: string;
+    public accountActivated = false;
+    public token: string;
     constructor(
             private activatedRoute: ActivatedRoute,
             private authService: AuthService) {}
