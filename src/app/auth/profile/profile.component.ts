@@ -27,7 +27,11 @@ export class ProfileComponent implements OnInit, OnDestroy {
                 }
             });
             this.profileSub = this.authService.profileImage.subscribe(image => {
-                this.profileImage = (image as any);
+                if (image === null) {
+                    return;
+                } else {
+                    this.profileImage = (image as any);
+                }
             });
         }
 

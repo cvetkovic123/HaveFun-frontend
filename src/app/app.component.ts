@@ -22,7 +22,6 @@ export class AppComponent implements OnInit, OnDestroy {
       this._token = res._token;
     });
     if (this._token) {
-      console.log('run');
       this.authService.getProfileImage(this._token);
     } else {
       this.authService.profileImage.next(('../assets/paperKit2/assets/img/no-avatar.jpg' as any));

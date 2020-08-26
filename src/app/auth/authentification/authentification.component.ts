@@ -3,8 +3,8 @@ import { Component, OnInit, OnDestroy, Inject } from '@angular/core';
 import { NgForm } from '@angular/forms';
 import { Router } from '@angular/router';
 import { AuthService } from '../auth.service';
-import { DOCUMENT } from '@angular/common';
-
+import { SocialAuthService, SocialUser } from "angularx-social-login";
+import { FacebookLoginProvider, GoogleLoginProvider } from "angularx-social-login";
 
 export interface User {
     name?: string;
@@ -26,6 +26,9 @@ export class AuthentificationComponent implements OnInit, OnDestroy {
     public errorResend: string;
     public successResend: string;
     public isLoginMode = false;
+    // for social log in
+    public socialUser: SocialUser;
+    public loggedIn: boolean;
 
     public user: User = {
       name: '',
@@ -36,8 +39,8 @@ export class AuthentificationComponent implements OnInit, OnDestroy {
     constructor(
       private router: Router,
       private authService: AuthService,
-      @Inject(DOCUMENT) private document: Document) {
-      }
+      private socialAuthService: SocialAuthService
+      ){}
 
     ngOnInit(): void {
       this.authService.user.subscribe(user => {
@@ -45,7 +48,25 @@ export class AuthentificationComponent implements OnInit, OnDestroy {
         if (isAuth) {
           this.router.navigate(['/auth/profile']);
         }
+
+        this.socialAuthService.authState.subscribe((user) => {
+          console.log('socialUser', user);
+          this.socialUser = user;
+          this.loggedIn = (user != null);
+        });
       });
+    }
+
+    public signInWithGoogle(): void {
+      this.socialAuthService.signIn(GoogleLoginProvider.PROVIDER_ID);
+    }
+   
+    public signInWithFB(): void {
+      this.socialAuthService.signIn(FacebookLoginProvider.PROVIDER_ID);
+    }
+
+    signOut(): void {
+      this.socialAuthService.signOut();
     }
 
     public onSubmit(form: NgForm): void {
@@ -65,7 +86,7 @@ export class AuthentificationComponent implements OnInit, OnDestroy {
             this.errorSuccess(error, '');
           });
       } else {
-        console.log('runs!!?');
+        // console.log('runs!!?');
         this.authService.signIn(email, password)
           .subscribe((result) => {
             this.authService.getProfileImage((result as any).message);
@@ -111,7 +132,6 @@ export class AuthentificationComponent implements OnInit, OnDestroy {
     }
 
     ngOnDestroy(): void {
-      // this.document.body.classList.remove('modal-open');
-      // this.document.body.classList.remove('modal-backdrop');
+    
     }
 }

@@ -91,7 +91,11 @@ export class AuthService {
                 })
             }
         ).subscribe((result) => {
-            this.profileImage.next((result as any).message);
+            if ((result as any).message === 'User has not yet uploaded image') {
+                return;
+            } else {
+                this.profileImage.next((result as any).message);
+            }
           });
     }
 
@@ -156,9 +160,10 @@ export class AuthService {
     }
 
     public autoLogout(expirationDuration: number) {
+
         this.tokenExpirationTimer = setTimeout(() => {
             this.logout();
-        }, expirationDuration - Date.now());
+        }, expirationDuration);
     }
 
     public logout(): void {
@@ -173,6 +178,7 @@ export class AuthService {
     }
 
     public autoLogin(): void {
+        console.log('AutoLogin started');
         const userData: {
             iss: string,
             sub: string,
@@ -194,8 +200,11 @@ export class AuthService {
             new Date(userData._tokenExpirationDate));
 
         if (loadedUser._token) {
+            console.log(loadedUser._token);
             this.user.next(loadedUser);
             const expirationDuration = new Date(userData._tokenExpirationDate).getTime() - new Date().getTime();
+            console.log(new Date(userData._tokenExpirationDate).getTime());
+            console.log(new Date().getTime());
             this.autoLogout(expirationDuration);
         }
     }
