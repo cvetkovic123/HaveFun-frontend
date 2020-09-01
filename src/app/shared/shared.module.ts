@@ -1,10 +1,12 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ConfirmEqualValidator } from './confirmEqualValidator.directive';
+import { LoadingSpinnerComponent } from './loading-spiner/loading-spinner.component';
 
 @NgModule({
     declarations: [
         ConfirmEqualValidator,
+        LoadingSpinnerComponent
 
     ],
     imports: [
@@ -12,7 +14,8 @@ import { ConfirmEqualValidator } from './confirmEqualValidator.directive';
     ],
     exports: [
         CommonModule,
-        ConfirmEqualValidator
+        ConfirmEqualValidator,
+        LoadingSpinnerComponent
     ]
 })
 

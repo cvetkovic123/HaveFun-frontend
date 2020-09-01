@@ -7,7 +7,8 @@ import { AuthentificationComponent } from './authentification/authentification.c
 import { ProfileComponent } from './profile/profile.component';
 import { AuthRouterModule } from './auth.router.module';
 import { ForgotpasswordComponent } from './forgotpassword/forgotpassword.component';
-
+import { MatIconModule } from '@angular/material/icon';
+import { MatButtonModule } from '@angular/material/button'; 
 
 @NgModule({
     declarations: [
@@ -21,6 +22,8 @@ import { ForgotpasswordComponent } from './forgotpassword/forgotpassword.compone
         FormsModule,
         SharedModule,
         AuthRouterModule,
+        MatIconModule,
+        MatButtonModule
     ]
 })
 
