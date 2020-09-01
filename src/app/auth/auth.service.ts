@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { HttpClient, HttpErrorResponse, HttpHeaders, HttpParams, HttpRequest } from '@angular/common/http';
+import { HttpClient, HttpErrorResponse, HttpHeaders } from '@angular/common/http';
 import { catchError, tap } from 'rxjs/operators';
 import { throwError, BehaviorSubject, Observable } from 'rxjs';
 import { User } from './user.model';
@@ -51,6 +51,23 @@ export class AuthService {
         );
     }
 
+    public backendGoogleSignIn() {
+        const headers = new HttpHeaders();
+        // headers.append('access-control-allow-origin', 'http://localhost:3300/users/auth/google');
+        return this.http.get(environment.api_key + '/users/auth/google',
+        {
+            headers: new HttpHeaders()
+                .append('Access-Control-Allow-Headers', 'Content-Type')
+                .append('Access-Control-Allow-Methods', 'GET')
+                .append('Access-Control-Allow-Origin', 'http://localhost:4200')
+        })
+            .pipe(
+                tap((resData) => {
+                    console.log('googleRes', resData);
+                })
+            );
+    }
+
     public emailVerification(token: string): Observable<object> {
         return this.http.get(
             environment.api_key + '/users/emailVerification',
@@ -73,7 +90,7 @@ export class AuthService {
                 uploadImageData,
             {
                 headers: new HttpHeaders({
-                    authorization: token,
+                    authorization: token
 
                 })
             }
@@ -99,7 +116,7 @@ export class AuthService {
           });
     }
 
-    public resendEmail(email: string, password: string) {
+    public resendEmail(email: string, password: string): Observable<object> {
         return this.http.post(
             environment.api_key + '/users/resendEmailVerification',
             {
@@ -112,8 +129,40 @@ export class AuthService {
     }
 
 
+    public forgotPassword(email: string) {
+        return this.http.post(
+            environment.api_key + '/users/forgotPassword',
+            {
+                email
+            }
+        ).pipe(
+            catchError(this.handleError)
+        )
+    }
+
+    public forgotChangePassword(email: string, newPassword: string, token: string) {
+        console.log('email', email);
+        console.log('password', newPassword);
+        console.log('token', token);
+        return this.http.patch(
+            environment.api_key + '/users/forgotChangePassword',
+            {
+                email,
+                newPassword
+            },
+            {
+                headers: new HttpHeaders({
+                    authorization: token
+                })
+            }
+        ).pipe(
+            catchError(this.handleError)
+        )
+    }
+
+
     private handleError(errorResponse: HttpErrorResponse) {
-        // console.log('error', errorResponse.error);
+        console.log('error', errorResponse);
         let errorMessage = 'An unknown error occured';
         // if (errorResponse.message.startsWith('Http failure response')) {
         //     errorMessage = 'Backend not connected';
@@ -124,8 +173,8 @@ export class AuthService {
             const paragraph = errorResponse.error;
             const regex = /<pre>(.*?)<\/pre>/;
             this.errorEmailCatcher = paragraph.match(regex);
-        }
-
+        }        
+        console.log(errorResponse.error.message)
         switch (errorResponse.error.message || errorResponse.error) {
             case 'EMAIL_EXISTS':
                 errorMessage = 'This email exists already!';
@@ -178,7 +227,7 @@ export class AuthService {
     }
 
     public autoLogin(): void {
-        console.log('AutoLogin started');
+        // console.log('AutoLogin started');
         const userData: {
             iss: string,
             sub: string,
@@ -200,11 +249,11 @@ export class AuthService {
             new Date(userData._tokenExpirationDate));
 
         if (loadedUser._token) {
-            console.log(loadedUser._token);
+            // console.log(loadedUser._token);
             this.user.next(loadedUser);
             const expirationDuration = new Date(userData._tokenExpirationDate).getTime() - new Date().getTime();
-            console.log(new Date(userData._tokenExpirationDate).getTime());
-            console.log(new Date().getTime());
+            // console.log(new Date(userData._tokenExpirationDate).getTime());
+            // console.log(new Date().getTime());
             this.autoLogout(expirationDuration);
         }
     }

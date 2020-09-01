@@ -3,8 +3,6 @@ import { Component, OnInit, OnDestroy, Inject } from '@angular/core';
 import { NgForm } from '@angular/forms';
 import { Router } from '@angular/router';
 import { AuthService } from '../auth.service';
-import { SocialAuthService, SocialUser } from "angularx-social-login";
-import { FacebookLoginProvider, GoogleLoginProvider } from "angularx-social-login";
 
 export interface User {
     name?: string;
@@ -25,10 +23,10 @@ export class AuthentificationComponent implements OnInit, OnDestroy {
     public success: string;
     public errorResend: string;
     public successResend: string;
+    public errorPasswordForgot: string;
+    public successPasswordForgot: string;
     public isLoginMode = false;
     // for social log in
-    public socialUser: SocialUser;
-    public loggedIn: boolean;
 
     public user: User = {
       name: '',
@@ -39,7 +37,6 @@ export class AuthentificationComponent implements OnInit, OnDestroy {
     constructor(
       private router: Router,
       private authService: AuthService,
-      private socialAuthService: SocialAuthService
       ){}
 
     ngOnInit(): void {
@@ -48,26 +45,18 @@ export class AuthentificationComponent implements OnInit, OnDestroy {
         if (isAuth) {
           this.router.navigate(['/auth/profile']);
         }
-
-        this.socialAuthService.authState.subscribe((user) => {
-          console.log('socialUser', user);
-          this.socialUser = user;
-          this.loggedIn = (user != null);
-        });
       });
     }
 
     public signInWithGoogle(): void {
-      this.socialAuthService.signIn(GoogleLoginProvider.PROVIDER_ID);
+      
+      this.authService.backendGoogleSignIn()
+        .subscribe(response => {
+          console.log('backendgoogle Sign in response', response);
+        }); 
     }
    
-    public signInWithFB(): void {
-      this.socialAuthService.signIn(FacebookLoginProvider.PROVIDER_ID);
-    }
 
-    signOut(): void {
-      this.socialAuthService.signOut();
-    }
 
     public onSubmit(form: NgForm): void {
       if (!form.valid) {
@@ -86,7 +75,6 @@ export class AuthentificationComponent implements OnInit, OnDestroy {
             this.errorSuccess(error, '');
           });
       } else {
-        // console.log('runs!!?');
         this.authService.signIn(email, password)
           .subscribe((result) => {
             this.authService.getProfileImage((result as any).message);
@@ -115,10 +103,30 @@ export class AuthentificationComponent implements OnInit, OnDestroy {
         });
     }
 
+    public onForgotPassword(form: NgForm): void {
+      if (!form.valid) {
+        return;
+      }
+
+      const email = form.value.email;
+
+      this.authService.forgotPassword(email)
+        .subscribe((result) => {
+          this.onErrorPasswordForgot('', (result as any).message);
+        }, (error) => {
+          this.onErrorPasswordForgot(error, '');
+        })
+    }
+
     public onSwitchMode(form: NgForm): void {
       this.isLoginMode = !this.isLoginMode;
       this.errorSuccess('', '');
       form.reset();
+    }
+
+    public onErrorPasswordForgot(error: any, success: string) {
+      this.errorPasswordForgot = error;
+      this.successPasswordForgot = success;
     }
 
     public errorSuccess(error: any, success: string) {

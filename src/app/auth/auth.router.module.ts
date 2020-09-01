@@ -5,12 +5,16 @@ import { AuthentificationComponent } from './authentification/authentification.c
 import { SignUpWelcomeComponent } from './signupwelcome/signupwelcome.component';
 import { ProfileComponent } from './profile/profile.component';
 import { AuthGuardOnlineService } from './auth-guard-online.service';
+import { ForgotpasswordComponent } from './forgotpassword/forgotpassword.component';
 
 const authRoutes: Routes = [
     { path: '', component: AuthComponent, children: [
         { path: '', component: AuthentificationComponent },
         { path: 'activate', component: SignUpWelcomeComponent, children: [
             { path: ':id' }
+        ]},
+        { path: 'passwordReset', component: ForgotpasswordComponent, children: [
+            { path: ':id'}
         ]},
         { path: 'profile', component: ProfileComponent, canActivate: [AuthGuardOnlineService] }
     ] }

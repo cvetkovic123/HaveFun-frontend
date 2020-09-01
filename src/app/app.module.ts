@@ -10,7 +10,7 @@ import { PostsModule } from './posts/posts.module';
 @NgModule({
   declarations: [
     AppComponent,
-    HeaderComponent
+    HeaderComponent,
   ],
   imports: [
     PostsModule,

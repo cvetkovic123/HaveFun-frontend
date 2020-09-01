@@ -6,10 +6,10 @@
           <div class="card card-register">
             <h3 style="color: black" class="title mx-auto">Welcome</h3>
             <div class="social-line text-center">
-              <a (click)="signInWithGoogle()" class="btn btn-neutral btn-facebook btn-just-icon">
+              <a class="btn btn-neutral btn-facebook btn-just-icon">
                 <i class="fa fa-facebook-square"></i>
               </a>
-              <a (click)="signInWithFB()" class="btn btn-neutral btn-google btn-just-icon">
+              <a (click)="signInWithGoogle()" class="btn btn-neutral btn-google btn-just-icon">
                 <i class="fa fa-google"></i>
               </a>
               <a href="#pablo" class="btn btn-neutral btn-twitter btn-just-icon">
@@ -20,13 +20,13 @@
                 *ngIf="error" 
                 class="alert alert-danger" 
                 role="alert">
-                <p class="responseMessage">{{ error }}</p>
+                <p class="responseMessage text-center">{{ error }}</p>
               </div>
               <div
               *ngIf="success" 
               class="alert alert-success" 
               role="alert">
-              <p class="responseMessage">{{ success }}</p>
+              <p class="responseMessage text-center">{{ success }}</p>
             </div>
             <form 
                 #authForm="ngForm"
@@ -85,7 +85,7 @@
 
                 <div class="form-group" *ngIf="!isLoginMode">
                     <label>Confirm Password</label>
-                    <input 
+                    <input  
                         type="password"
                         id="confirmPassword"
                         class="form-control"
@@ -121,77 +121,140 @@
 
             </form>
             <div *ngIf="isLoginMode" class="forgot">
-              <a href="#" class="btn btn-link btn-danger">Forgot password?</a>
+              <a class="btn btn-link btn-danger" id="forgotButtonColor" data-toggle="modal" data-target="#forgotPassword">
+                Forgot password?</a>
+
+              
             </div>
             <div *ngIf="!isLoginMode" class="forgot">
-              <!-- <a href="#" class="btn btn-link btn-danger">Resend email verification?</a> -->
-              <a style="color: #f33816" class="btn btn-link btn-danger" data-toggle="modal" data-target="#loginModal">
-                Resend email verification?
-              </a>
-              <div class="modal fade" id="loginModal" tabindex="-1" role="dialog" aria-hidden="false">
-                <div class="modal-dialog modal-register">
-                    <div class="modal-content">
-                        <div class="modal-header no-border-header text-center">
-                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                              <span aria-hidden="true">&times;</span>
-                            </button>
-                            <h3 class="modal-title text-center">Resend email-verification</h3>
-                        </div>
-                        <div class="modal-body">
-                          <div
-                            *ngIf="errorResend" 
-                            class="alert alert-danger" 
-                            role="alert">
-                              <p class="responseMessage">{{ errorResend }}</p>
-                          </div>
-                          <div
-                            *ngIf="successResend" 
-                            class="alert alert-success" 
-                            role="alert">
-                              <p class="responseMessage">{{ successResend }}</p>
-                          </div>
-                        <form
-                              #emailResendForm="ngForm"
-                              class="register-form"
-                              (ngSubmit)="onResendEmail(emailResendForm)">
-                              <div class="form-group">
-                                  <label style="color: white">Email</label>
-                              <input 
-                                type="text" 
-                                name="email" 
-                                value=""
-                                required
-                                ngModel
-                                #email="ngModel"
-                                placeholder="Email" 
-                                class="form-control"/>
-                                <span
-                                  *ngIf="!email.valid && email.touched">
-                                  Please enter a valid email!</span>
-                            </div>
-                            <div class="form-group">
-                                  <label style="color: white">Password</label>
-                              <input 
-                                type="password" 
-                                name="password"
-                                value="" 
-                                ngModel
-                                required
-                                #password="ngModel"
-                                placeholder="Password" 
-                                class="form-control"/>
-                                <span
-                                  *ngIf="!password.valid && password.touched">
-                                  Please enter a valid password!</span>
-                            </div>
-                              <button 
-                              [disabled]="!emailResendForm.valid"
-                              class="btn btn-danger btn-block btn-round"> Send</button>
-                            </form>
-                        </div>
-                      </div>
-                </div>
-            </div>
+              <a class="btn btn-link btn-danger" id="forgotButtonColor" data-toggle="modal" data-target="#resEmailVerification">
+                Resend email verification?</a>
             </div>
           </div>
         </div>
+
+
+<!-- start password reset modal -->
+<div class="modal fade" id="forgotPassword"  data-backdrop="false" tabindex="-1" role="dialog" aria-hidden="false">
+  <div class="modal-dialog modal-register">
+    <div class="modal-content">
+      <div class="modal-header no-border-header text-center">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+        <h3 class="modalt-title text-center">Forgot Password</h3>
+      </div>
+      <div class="container">
+        <div class="modal-body">
+          <form
+            #passwordResendForm="ngForm"
+            class="register-form"
+            (ngSubmit)="onForgotPassword(passwordResendForm)">
+            <div class="form-group">
+              <label style="color: white">Email</label>
+              <input 
+                  type="text"
+                  name="email"
+                  value=""
+                  required
+                  ngModel
+                  #email="ngModel"
+                  placeholder="Email"
+                  class="form-control">
+              <span
+                  *ngIf="!email.valid && email.touched">
+                  Please enter an email!</span>
+            </div>
+            <button 
+                [disabled]="!passwordResendForm.valid"
+                class="btn btn-danger btn-block btn-round">Send</button>
+          </form>
+          <div
+                *ngIf="errorPasswordForgot" 
+                class="alert alert-danger" 
+                role="alert">
+                <p class="responseMessage text-center">{{ errorPasswordForgot }}</p>
+              </div>
+              <div
+              *ngIf="successPasswordForgot" 
+              class="alert alert-success" 
+              role="alert">
+              <p class="responseMessage text-center">{{ successPasswordForgot }}</p>
+            </div>
+
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- start email resend modal -->
+<div class="modal fade" id="resEmailVerification" data-backdrop="false" tabindex="-1" role="dialog" aria-hidden="false">
+  <div class="modal-dialog modal-register">
+      <div class="modal-content">
+          <div class="modal-header no-border-header text-center">
+              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+              </button>
+              <h3 class="modal-title text-center">Resend email-verification</h3>
+          </div>
+          <div class="container">
+            <div class="modal-body">
+              <div
+                  *ngIf="errorResend" 
+                  class="alert alert-danger" 
+                  role="alert">
+              <p class="responseMessage text-center">{{ errorResend }}</p>
+              </div>
+              <div
+                  *ngIf="successResend" 
+                  class="alert alert-success" 
+                  role="alert">
+                <p class="responseMessage text-center">{{ successResend }}</p>
+              </div>
+              <form
+                  #emailResendForm="ngForm"
+                  class="register-form"
+                  (ngSubmit)="onResendEmail(emailResendForm)">
+                <div class="form-group">
+                  <label style="color: white">Email</label>
+                  <input 
+                      type="text" 
+                      name="email" 
+                      value=""
+                      required
+                      ngModel
+                      #email="ngModel"
+                      placeholder="Email" 
+                      class="form-control"/>
+                  <span
+                      *ngIf="!email.valid && email.touched">
+                  Please enter an email!</span>
+                </div>
+                <div class="form-group">
+                  <label style="color: white">Password</label>
+                  <input 
+                      type="password" 
+                      name="password"
+                      value="" 
+                      ngModel
+                      required
+                      #password="ngModel"
+                      placeholder="Password" 
+                      class="form-control"/>
+                    <span
+                        *ngIf="!password.valid && password.touched">
+                    Please enter a valid password!</span>
+                </div>
+                <button 
+                    [disabled]="!emailResendForm.valid"
+                    class="btn btn-danger btn-block btn-round"> 
+                Send</button>
+              </form>
+            </div>
+          </div>
+        </div>
+    </div>
+</div>
+<!-- end modal -->
