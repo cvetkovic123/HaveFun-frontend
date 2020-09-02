@@ -62,7 +62,6 @@ export class ForgotpasswordComponent implements OnInit {
       const confirmPassword = form.value.confirmPassword;
 
       if (newPassword !== confirmPassword) {
-        console.log('alo');
         this.errorSuccess('Password\'s are not the same!', '');
         form.reset();
         return;

@@ -137,7 +137,7 @@ export class AuthService {
             }
         ).pipe(
             catchError(this.handleError)
-        )
+        );
     }
 
     public forgotChangePassword(email: string, newPassword: string, token: string) {
@@ -154,7 +154,7 @@ export class AuthService {
             }
         ).pipe(
             catchError(this.handleError)
-        )
+        );
     }
 
 
@@ -162,12 +162,12 @@ export class AuthService {
         console.log('error', errorResponse);
         let errorMessage = 'An unknown error occured';
 
-        if (typeof errorResponse.error == "string") {
+        if (typeof errorResponse.error === 'string') {
             if (errorResponse.error.startsWith('<!DOCTYPE')) {
                 const paragraph = errorResponse.error;
                 const regex = /<pre>(.*?)<\/pre>/;
                 this.errorEmailCatcher = paragraph.match(regex);
-            }        
+            }
         }
         switch (errorResponse.error.message || errorResponse.error) {
             case 'EMAIL_EXISTS':
