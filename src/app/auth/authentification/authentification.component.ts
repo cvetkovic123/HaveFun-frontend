@@ -5,12 +5,13 @@ import { Router } from '@angular/router';
 import { AuthService } from '../auth.service';
 
 
-import { DomSanitizer } from "@angular/platform-browser";
+import { DomSanitizer } from '@angular/platform-browser';
 import { MatIconRegistry } from '@angular/material/icon';
+import { environment } from 'src/environments/environment';
 
 
-const googleLogoURL = 
-"https://raw.githubusercontent.com/fireflysemantics/logo/master/Google.svg";
+const googleLogoURL =
+'https://raw.githubusercontent.com/fireflysemantics/logo/master/Google.svg';
 
 export interface User {
     name?: string;
@@ -33,8 +34,9 @@ export class AuthentificationComponent implements OnInit, OnDestroy {
     public successResend: string;
     public errorPasswordForgot: string;
     public successPasswordForgot: string;
-    public isLoginMode = false;
+    public isLoginMode = true;
     public isLoading = false;
+    public hostUrl = environment.api_key + '/users/auth/google';
 
     // for social log in
 
@@ -49,8 +51,9 @@ export class AuthentificationComponent implements OnInit, OnDestroy {
       private authService: AuthService,
       private matIconRegistry: MatIconRegistry,
       private domSanitizer: DomSanitizer
-      ){this.matIconRegistry.addSvgIcon("logo",
-      this.domSanitizer.bypassSecurityTrustResourceUrl(googleLogoURL))}
+      ) {this.matIconRegistry.addSvgIcon('logo',
+      this.domSanitizer.bypassSecurityTrustResourceUrl(googleLogoURL));
+    }
 
     ngOnInit(): void {
       this.authService.user.subscribe(user => {
@@ -67,9 +70,12 @@ export class AuthentificationComponent implements OnInit, OnDestroy {
         .subscribe(response => {
           this.isLoading = false;
           console.log('backendgoogle Sign in response', response);
-        }); 
+        }, (error) => {
+          this.isLoading = false;
+          console.log('error', error);
+        });
     }
-   
+
 
 
     public onSubmit(form: NgForm): void {
@@ -136,7 +142,7 @@ export class AuthentificationComponent implements OnInit, OnDestroy {
           this.onErrorPasswordForgot('', (result as any).message);
         }, (error) => {
           this.onErrorPasswordForgot(error, '');
-        })
+        });
     }
 
     public onSwitchMode(form: NgForm): void {
@@ -150,17 +156,31 @@ export class AuthentificationComponent implements OnInit, OnDestroy {
       this.successPasswordForgot = success;
     }
 
+    // error handling for forgetting password
+    passwordForgetClose(form: NgForm) {
+      this.errorPasswordForgot = '';
+      this.successPasswordForgot = '';
+      form.reset();
+    }
+
     public errorSuccess(error: any, success: string) {
       this.error = error;
       this.success = success;
     }
 
+    // error handling for resending email if you didn't verify in time
     public errorSuccessResendEmail(error: any, success: string) {
       this.errorResend = error;
       this.successResend = success;
     }
 
+    public emailResendClose(form: NgForm) {
+      this.errorResend = '';
+      this.successResend = '';
+      form.reset();
+    }
+
     ngOnDestroy(): void {
-    
+
     }
 }

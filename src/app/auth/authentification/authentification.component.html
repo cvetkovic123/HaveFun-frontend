@@ -17,9 +17,10 @@
               </a> -->
               <button mat-button style="padding: 1rem;" (click)="signInWithGoogle()">
                 <mat-icon style="width: 50px; height:30px"
-                          svgIcon="logo"></mat-icon> <span class="spanGoogleText">Login With Google</span> 
+                  svgIcon="logo"></mat-icon> <span class="spanGoogleText">Login With Google</span> 
               </button>  
             </div>
+            <!-- main error success  -->
             <div
                 *ngIf="error" 
                 class="alert alert-danger" 
@@ -147,7 +148,7 @@
   <div class="modal-dialog modal-register">
     <div class="modal-content">
       <div class="modal-header no-border-header text-center">
-        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+        <button type="button" class="close" data-dismiss="modal" (click)="passwordForgetClose(passwordResendForm)" aria-label="Close">
           <span aria-hidden="true">&times;</span>
         </button>
         <h3 class="modalt-title text-center">Forgot Password</h3>
@@ -202,7 +203,7 @@
   <div class="modal-dialog modal-register">
       <div class="modal-content">
           <div class="modal-header no-border-header text-center">
-              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+              <button type="button" class="close" data-dismiss="modal" aria-label="Close" (click)="emailResendClose(emailResendForm)">
                 <span aria-hidden="true">&times;</span>
               </button>
               <h3 class="modal-title text-center">Resend email-verification</h3>

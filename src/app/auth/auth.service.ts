@@ -141,9 +141,6 @@ export class AuthService {
     }
 
     public forgotChangePassword(email: string, newPassword: string, token: string) {
-        console.log('email', email);
-        console.log('password', newPassword);
-        console.log('token', token);
         return this.http.patch(
             environment.api_key + '/users/forgotChangePassword',
             {
@@ -164,17 +161,14 @@ export class AuthService {
     private handleError(errorResponse: HttpErrorResponse) {
         console.log('error', errorResponse);
         let errorMessage = 'An unknown error occured';
-        // if (errorResponse.message.startsWith('Http failure response')) {
-        //     errorMessage = 'Backend not connected';
-        //     return throwError(errorMessage);
-        // }
 
-        if (errorResponse.error.startsWith('<!DOCTYPE')) {
-            const paragraph = errorResponse.error;
-            const regex = /<pre>(.*?)<\/pre>/;
-            this.errorEmailCatcher = paragraph.match(regex);
-        }        
-        console.log(errorResponse.error.message)
+        if (typeof errorResponse.error == "string") {
+            if (errorResponse.error.startsWith('<!DOCTYPE')) {
+                const paragraph = errorResponse.error;
+                const regex = /<pre>(.*?)<\/pre>/;
+                this.errorEmailCatcher = paragraph.match(regex);
+            }        
+        }
         switch (errorResponse.error.message || errorResponse.error) {
             case 'EMAIL_EXISTS':
                 errorMessage = 'This email exists already!';
