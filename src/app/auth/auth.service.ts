@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { HttpClient, HttpErrorResponse, HttpHeaders } from '@angular/common/http';
+import { HttpClient, HttpErrorResponse, HttpHeaders, HttpParams } from '@angular/common/http';
 import { catchError, tap } from 'rxjs/operators';
 import { throwError, BehaviorSubject, Observable } from 'rxjs';
 import { User } from './user.model';
@@ -57,13 +57,22 @@ export class AuthService {
         return this.http.get(environment.api_key + '/users/auth/google',
         {
             headers: new HttpHeaders()
-                .append('Access-Control-Allow-Headers', 'Content-Type')
-                .append('Access-Control-Allow-Methods', 'GET')
-                .append('Access-Control-Allow-Origin', 'http://localhost:4200')
-        })
+                .append('Content-Type', 'application/json')
+                .append('Access-Control-Allow-Origin', '*'),
+            params: new HttpParams()
+                .set('client_id', '161515845862-a8v9ckln8v231ep1uv471cahgu2nj7mf.apps.googleusercontent.com')
+                .set('redirect_uri', '/users/auth/google/callback')
+                .set('scope', 'https://www.googleapis.com/auth/drive.metadata.readonly')
+                .set('state', 'try_sample_request')
+                .set('include_granted_scopes', 'true')
+
+                .set( 'response_type', 'token')
+        },
+        )
             .pipe(
                 tap((resData) => {
                     console.log('googleRes', resData);
+                    catchError(this.handleError);
                 })
             );
     }
@@ -140,7 +149,7 @@ export class AuthService {
         );
     }
 
-    public forgotChangePassword(email: string, newPassword: string, token: string) {
+    public forgotChangePassword(email: string, newPassword: string, token: string): Observable<object> {
         return this.http.patch(
             environment.api_key + '/users/forgotChangePassword',
             {
@@ -158,12 +167,65 @@ export class AuthService {
     }
 
 
+    public editName(name: string, token: string): Observable<object> {
+        return this.http.patch(environment.api_key + '/users/editName',
+        {
+            name
+        },
+        {
+            headers: new HttpHeaders({
+                authorization: token
+            })
+        });
+    }
+
+    public getName(token: string): Observable<object> {
+        return this.http.get(environment.api_key + '/users/getName',
+        {
+            headers: new HttpHeaders({
+                authorization: token
+            })
+        }).pipe(
+            catchError(this.handleError)
+        );
+    }
+
+    public changePassword(email: string, password: string, newPassword: string, token: string) {
+        return this.http.patch(environment.api_key + '/users/changePassword',
+        {
+            email,
+            password,
+            newPassword
+        },
+        {
+            headers: new HttpHeaders({
+                authorization: token
+            })
+        }).pipe(
+            catchError(this.handleError)
+        );
+    }
+
+
+    public deleteProfile(token: string): Observable<object> {
+        return this.http.delete(environment.api_key + '/users/deleteProfile',
+        {
+            headers: new HttpHeaders({
+                authorization: token
+            })
+        }).pipe(
+            catchError(this.handleError)
+        );
+    }
+
+
     private handleError(errorResponse: HttpErrorResponse) {
         console.log('error', errorResponse);
         let errorMessage = 'An unknown error occured';
 
         if (typeof errorResponse.error === 'string') {
             if (errorResponse.error.startsWith('<!DOCTYPE')) {
+                console.log('true');
                 const paragraph = errorResponse.error;
                 const regex = /<pre>(.*?)<\/pre>/;
                 this.errorEmailCatcher = paragraph.match(regex);
@@ -179,9 +241,18 @@ export class AuthService {
             case 'Unauthorized':
                 errorMessage = 'This email was not registered or the password is incorrect!';
                 break;
+            case 'Old password not correct!':
+                errorMessage = 'Current password is not correct!';
+                break;
+
         }
         if (this.errorEmailCatcher) {
-            errorMessage = this.errorEmailCatcher[1];
+            console.log('errorWTF', typeof this.errorEmailCatcher[1]);
+            if (this.errorEmailCatcher[1].startsWith('Error: Invalid mime type')) {
+                errorMessage = 'You can only upload files with jpg, jpeg and png format.';
+            } else {
+                errorMessage = this.errorEmailCatcher[1];
+            }
         }
         return throwError(errorMessage);
     }
@@ -233,6 +304,8 @@ export class AuthService {
         if (!userData) {
             return;
         }
+
+        this.getName(userData._token).subscribe(() => {});
 
         const loadedUser = new User(
             userData.iss,

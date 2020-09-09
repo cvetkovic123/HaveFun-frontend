@@ -15,17 +15,19 @@
         </div>
       </div>
       <div class="row">
-        <div class="col-md-6 ml-auto mr-auto text-center">
+        <div class="col-md-6 ml-auto mr-auto">
           <p>An artist of considerable range, Jane Faker — the name taken by Melbourne-raised, Brooklyn-based Nick Murphy — writes, performs and records all of his own music, giving it a warm, intimate feel with a solid groove structure. </p>
           <br />
-          <button type="button" class="btn btn-primary btn-round" data-toggle="modal" data-target="#settings">
-            <i class="fa fa-cog"></i> Settings
-        </button>
+          <div class="text-center">
+            <button type="button" class="btn btn-primary btn-round" data-toggle="modal" data-target="#settings">
+              <i class="fa fa-cog"></i> Settings
+            </button>
+          </div>
         
-        <div class="modal fade" id="settings" tabindex="-1" role="dialog" aria-hidden="false">
+        <div #basicModal class="modal fade bd-example-modal-lg" id="settings" tabindex="-1" role="dialog" aria-hidden="false">
           <div class="modal-dialog modal-lg">
             <div class="modal-content">
-                <div class="modal-header no-border-header text-center">
+                <div class="modal-header no-border-header">
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                       <span aria-hidden="true">&times;</span>
                     </button>
@@ -34,25 +36,188 @@
                 <div class="modal-body">
                   <div class="container">
                     <div class="row">
-                      <div class="col-md-3">
-                        <h3>Select Profile Image</h3>
-                        <div>
-                          <button (click)="filePicker.click()" type="button" class="btn btn-primary">Upload Image</button>
-                          <input 
-                            type="file" 
-                            #filePicker
-                            (change)="onSubmit($event)"
-                            name="image"
-                            class="form-control" />
+                    <!-- SELECT PROFILE IMAGE FORM -->
+                      <div class="col-md-6">
+                        <form>
+                          <div class="form-group">
+                            <label>Select Profile Image</label><br>
+                            <button
+                                *ngIf="showMessageImageUpload" 
+                                (click)="filePicker.click()" 
+                                type="button" 
+                                class="btn btn-rounded btn-primary">Upload Image</button>
+                            <input 
+                                type="file" 
+                                #filePicker
+                                (change)="onUploadProfileImage($event)"
+                                name="image"
+                                class="form-control" />
+                          </div>
+                          <div 
+                              class="alert alert-danger"
+                              *ngIf="errorImageUpload"
+                              role="alert">
+                          <p class="responseMessage text-center">{{ errorImageUpload }}</p>
+                          </div>
+                          <div 
+                              class="alert alert-success"
+                              *ngIf="successImageUpload"
+                              role="alert">
+                          <p class="responseMessage text-center">{{ successImageUpload }}</p>
+                          </div>
+                        </form>
+                        <!-- EDIT NAME FORM -->
+                        <form
+                            #editNameForm="ngForm"
+                            class="register-form"
+                            (keyup)="onEditName($event, editNameForm)">
+                          <div class="form-group">
+                            <label>Edit Name</label>
+                            <input 
+                                type="text"
+                                name="editName"
+                                class="form-control"
+                                minlength="5"
+                                maxlength="25"
+                                pattern="[^()/><\][\\\x22,;|]+"
+                                #editName="ngModel"
+                                required
+                                [(ngModel)]="name"
+                                class="form-control">
+                            <span
+                                class="help-block"
+                                *ngIf="editName.touched && editName.errors?.required">
+                              You can not not have a name!
+                            </span>
+                            <span
+                                class="help-block"
+                                *ngIf="editName.errors?.minlength">
+                              Name can't be less than 5 characters!
+                            </span>
+                            <span
+                                class="help-block"
+                                *ngIf="editName.errors?.maxlength">
+                              Name can't be more than 25 characters!
+                            </span>
+                            <span
+                                class="help-block"
+                                *ngIf="editName.errors?.pattern">
+                              Name can't contain special characters!
+                            </span>
+                          </div>
+                        </form>
+                        <form
+                            #deleteProfile="ngForm"
+                            class="register-form"
+                            (ngSubmit)="onDeleteProfile()">
+                          <div class="form-group">
+                            <label>Delete Profile</label>
+                            <button
+                                class="btn btn-block btn-danger">
+                                Delete HaveFun Profile
+                            </button>
+                          </div>
+                        </form>
+                      </div>
+                      <div class="col-md-6">
+                        <!-- CHANGE PASSWORD FORM -->
+                        <form
+                            #resetPasswordForm="ngForm"
+                            class="register-form"
+                            (ngSubmit)="onChangePassword(resetPasswordForm)">
+                          <div class="form-group">
+                            <h5 class="text-center">Change Password:</h5><br>
+                            <label>Current Password</label>
+                            <input 
+                                type="password"
+                                id="oldPassword"
+                                name="oldPassword"
+                                required
+                                ngModel
+                                minlength="5"
+                                maxlength="25"
+                                #oldPassword="ngModel"
+                                class="form-control"
+                                placeholder="Current Password">
+                                <span
+                                    class="help-block"
+                                    *ngIf="oldPassword.touched && oldPassword.invalid">
+                                    Old password is required!</span>
+                          </div>
+                          <div class="form-group">
+                            <label>New Password</label>
+                            <input 
+                                type="password"
+                                id="newPassword"
+                                name="newPassword"
+                                required
+                                ngModel
+                                minlength="5"
+                                maxlength="25"
+                                #newPassword="ngModel"
+                                class="form-control"
+                                placeholder="New Password">
+                                <span
+                                    class="help-block"
+                                    *ngIf="newPassword.touched && newPassword.invalid">
+                                    Password is required!</span>
+                          </div>
+                          <div class="form-group">
+                            <label>Confirm New Password</label>
+                            <input 
+                                type="password"
+                                id="confirmNewPassword"
+                                name="confirmNewPassword"
+                                required
+                                ngModel
+                                minlength="5"
+                                maxlength="25"
+                                appConfirmEqualValidator="newPassword"
+                                #confirmNewPassword="ngModel"
+                                class="form-control"
+                                placeholder="Confirm new password">
+                                <span 
+                                    class="help-block"
+                                    *ngIf="confirmNewPassword.touched && confirmNewPassword.errors?.required">
+                                    Confirm password is required!</span>
+                                <span
+                                    class="help-block"
+                                    *ngIf="
+                                        confirmNewPassword.touched && 
+                                        confirmNewPassword.errors?.notEqual &&
+                                        !confirmNewPassword.errors?.required ">
+                                    Passwords do not match!</span>
+                          </div>
+                          <button
+                              *ngIf="showMessagePasswordChange"
+                              [disabled]="!resetPasswordForm.valid" 
+                              class="btn btn-danger btn-block btn-round">Change Password
+                          </button>
+                        <div class="container">
+                          <br>
+                          <div 
+                              class="alert alert-danger"
+                              *ngIf="errorPasswordChange"
+                              role="alert">
+                          <p class="responseMessage text-center">{{ errorPasswordChange }}</p>
+                          </div>
+                          <div 
+                              class="alert alert-success"
+                              *ngIf="successPasswordChange"
+                              role="alert">
+                          <p class="responseMessage text-center">{{ successPasswordChange }}</p>
+                          </div>
+
                         </div>
-                        <!-- <form></form> -->
-                    </div> 
+                        </form>
+                        <!-- CHANGE PASSWORD FORM END -->
+                      </div>
+                    </div>
                   </div>
                 </div>
               </div>
             </div>
           </div>
-        </div>
       <br/>
      
   <footer class="footer">

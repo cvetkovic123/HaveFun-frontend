@@ -74,6 +74,12 @@ export class AuthentificationComponent implements OnInit, OnDestroy {
           this.isLoading = false;
           console.log('error', error);
         });
+      // window.open('http://localhost:3300/users/auth/google', 'mywindow', 'location=1,status=1,scrollbars=1, width=800,height=800');
+      // const listener = window.addEventListener('message', (message) => {
+      //   console.log('message', message);
+      //   this.isLoading = false;
+        // message will contain facebook user and details
+      // });
     }
 
 

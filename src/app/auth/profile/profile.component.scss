@@ -9,3 +9,17 @@ html, body { height: 100%; }
 input[type="file"] {
     visibility: hidden;
 }
+
+
+input.ng-invalid.ng-touched {
+    border: 1px solid red !important;
+    color: red;
+}
+
+span {
+    color: red;
+}
+
+p.responseMessage {
+    font-weight: bold;
+}

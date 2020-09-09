@@ -6,7 +6,8 @@ import { LoadingSpinnerComponent } from './loading-spiner/loading-spinner.compon
 @NgModule({
     declarations: [
         ConfirmEqualValidator,
-        LoadingSpinnerComponent
+        LoadingSpinnerComponent,
+
 
     ],
     imports: [
