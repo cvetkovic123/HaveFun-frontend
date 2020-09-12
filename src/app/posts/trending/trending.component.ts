@@ -10,6 +10,7 @@ export class TrendingComponent implements OnInit {
   constructor() { }
 
   ngOnInit() {
+    console.log('trending here');
   }
 
 }

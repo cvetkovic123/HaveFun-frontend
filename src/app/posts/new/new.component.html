@@ -1,0 +1,58 @@
+
+<div class="section profile-content">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-5">
+                <div *ngIf="isLoading" style="text-align: center;">
+                    <app-loading-spinner></app-loading-spinner>
+                </div>
+                    <form 
+                        #newPostForm="ngForm"
+                        class="register-form"
+                        (ngSubmit)="onCreateNewPost(newPostForm, $event)">
+                        <!-- title  -->
+                        <div class="form-group">
+                          <label>Title:</label>
+                          <input 
+                              type="text"
+                              id="title"
+                              name="title"
+                              ngModel
+                              maxlength="25"
+                              required
+                              #title="ngModel"
+                              class="form-control"
+                              placeholder="Title of post">
+                              <span
+                                  *ngIf="!title.valid && title.touched ">
+                                  Please enter a title!</span>
+                        </div>
+                        <!-- image upload -->
+                        <div class="form-group">
+                            <label>Upload Post Image</label><br>
+                            
+                            <input 
+                                type="file" 
+                                required
+                                id="image"
+                                ngModel
+                                (change)="preview($event)"
+                                name="image"
+                                #filePicker="ngModel"
+                                class="form-control"/>
+                          </div>
+                          
+                          <button
+                            [disabled]="!newPostForm.valid"
+                            class="btn btn-primary btn-round">Create New Post</button>
+        
+                    </form>
+            </div>
+            <div class="col-md-7">
+                <h3>Image Preview Before Upload:</h3>
+                <span style="color:red;" *ngIf="message">{{message}}</span>
+                <img [src]="imgURL" height="200" *ngIf="imgURL">
+            </div>
+        </div>
+   </div>
+</div>

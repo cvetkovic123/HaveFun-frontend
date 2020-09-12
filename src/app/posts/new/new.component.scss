@@ -1,0 +1,19 @@
+// input[type="file"] {
+//     visibility: hidden;
+// }
+
+
+
+input.ng-invalid.ng-touched {
+    border: 1px solid red !important;
+    color: red;
+}
+
+span {
+    color: red;
+}
+
+
+#image:hover {
+    background-color: rgba(0, 0, 0, 0.1);
+}

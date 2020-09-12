@@ -10,3 +10,11 @@ img {
 #navbarDropdown::after {
     display: none;
 }
+
+@media screen and (max-width: 992px) {
+    .moveButtonLeft {
+        font-weight: bold;
+        position: relative;
+        right: 110px;
+    }
+}

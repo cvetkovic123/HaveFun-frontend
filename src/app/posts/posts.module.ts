@@ -5,19 +5,30 @@ import { PopularComponent } from './popular/popular.component';
 import { TrendingComponent } from './trending/trending.component';
 import { FreshComponent } from './fresh/fresh.component';
 import { PostsComponent } from './posts.component';
-import { ReactiveFormsModule } from '@angular/forms';
+import { ReactiveFormsModule, FormsModule } from '@angular/forms';
+import { NewComponent } from './new/new.component';
+import { ScrollingModule } from '@angular/cdk/scrolling';
+import { FreshCommentComponent } from './fresh/freshComments/freshComment.component';
 
 @NgModule({
     declarations: [
         PostsComponent,
         PopularComponent,
         TrendingComponent,
-        FreshComponent
+        FreshComponent,
+        NewComponent,
+        FreshCommentComponent
     ],
     imports: [
+        FormsModule,
+        ScrollingModule,
         SharedModule,
         ReactiveFormsModule,
         PostsRouterModule
+    ],
+    exports: [
+        ScrollingModule,
+
     ]
 })
 

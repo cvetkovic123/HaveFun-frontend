@@ -52,29 +52,21 @@ export class AuthService {
     }
 
     public backendGoogleSignIn() {
-        const headers = new HttpHeaders();
+        // const headers = new HttpHeaders();
         // headers.append('access-control-allow-origin', 'http://localhost:3300/users/auth/google');
-        return this.http.get(environment.api_key + '/users/auth/google',
-        {
-            headers: new HttpHeaders()
-                .append('Content-Type', 'application/json')
-                .append('Access-Control-Allow-Origin', '*'),
-            params: new HttpParams()
-                .set('client_id', '161515845862-a8v9ckln8v231ep1uv471cahgu2nj7mf.apps.googleusercontent.com')
-                .set('redirect_uri', '/users/auth/google/callback')
-                .set('scope', 'https://www.googleapis.com/auth/drive.metadata.readonly')
-                .set('state', 'try_sample_request')
-                .set('include_granted_scopes', 'true')
-
-                .set( 'response_type', 'token')
-        },
-        )
-            .pipe(
-                tap((resData) => {
-                    console.log('googleRes', resData);
-                    catchError(this.handleError);
-                })
-            );
+        // return this.http.get(environment.api_key + '/users/auth/google',
+        // {
+        //     headers: new HttpHeaders()
+        //         .append('credentials', 'include'),
+        // },
+        // )
+        //     .pipe(
+        //         tap((resData) => {
+        //             console.log('googleRes', resData);
+        //             catchError(this.handleError);
+        //         })
+        //     );
+        // window.open('https://www.youtube.com/watch?v=dQw4w9WgXcQ', 'new');
     }
 
     public emailVerification(token: string): Observable<object> {
@@ -220,7 +212,6 @@ export class AuthService {
 
 
     private handleError(errorResponse: HttpErrorResponse) {
-        console.log('error', errorResponse);
         let errorMessage = 'An unknown error occured';
 
         if (typeof errorResponse.error === 'string') {
@@ -247,7 +238,6 @@ export class AuthService {
 
         }
         if (this.errorEmailCatcher) {
-            console.log('errorWTF', typeof this.errorEmailCatcher[1]);
             if (this.errorEmailCatcher[1].startsWith('Error: Invalid mime type')) {
                 errorMessage = 'You can only upload files with jpg, jpeg and png format.';
             } else {
@@ -274,10 +264,10 @@ export class AuthService {
     }
 
     public autoLogout(expirationDuration: number) {
-
+        const timeOut = expirationDuration - new Date().getTime();
         this.tokenExpirationTimer = setTimeout(() => {
             this.logout();
-        }, expirationDuration);
+        }, timeOut);
     }
 
     public logout(): void {
@@ -318,7 +308,7 @@ export class AuthService {
         if (loadedUser._token) {
             // console.log(loadedUser._token);
             this.user.next(loadedUser);
-            const expirationDuration = new Date(userData._tokenExpirationDate).getTime() - new Date().getTime();
+            const expirationDuration = new Date(userData._tokenExpirationDate).getTime();
             // console.log(new Date(userData._tokenExpirationDate).getTime());
             // console.log(new Date().getTime());
             this.autoLogout(expirationDuration);

@@ -1,4 +1,4 @@
-import { Component, ViewEncapsulation, OnInit, OnDestroy, ViewChild, ElementRef } from '@angular/core';
+import { Component, OnInit, OnDestroy, ViewChild, ElementRef } from '@angular/core';
 import { Subscription } from 'rxjs';
 import { AuthService } from '../auth.service';
 import { NgForm } from '@angular/forms';
@@ -8,8 +8,7 @@ import { Router } from '@angular/router';
 @Component({
     selector: 'app-profile',
     templateUrl: './profile.component.html',
-    styleUrls: ['./profile.component.scss'],
-    encapsulation: ViewEncapsulation.None
+    styleUrls: ['./profile.component.scss']
 })
 
 
@@ -56,6 +55,7 @@ export class ProfileComponent implements OnInit, OnDestroy {
 
         public onUploadProfileImage(event: Event): void {
             const file = (event.target as HTMLInputElement).files[0];
+            console.log('file uploaded', file);
             const title = file.name;
             this.authService.uploadProfileImage(file, title, this._token)
                 .subscribe((result) => {

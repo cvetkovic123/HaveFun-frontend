@@ -65,15 +65,18 @@ export class AuthentificationComponent implements OnInit, OnDestroy {
     }
 
     public signInWithGoogle(): void {
-      this.isLoading = true;
-      this.authService.backendGoogleSignIn()
-        .subscribe(response => {
-          this.isLoading = false;
-          console.log('backendgoogle Sign in response', response);
-        }, (error) => {
-          this.isLoading = false;
-          console.log('error', error);
-        });
+      window.open('https://www.youtube.com/watch?v=dQw4w9WgXcQ', 'new');
+
+      // this.isLoading = true;
+      // this.authService.backendGoogleSignIn()
+      //   .subscribe(response => {
+      //     this.isLoading = false;
+      //     console.log('backendgoogle Sign in response', response);
+      //   }, (error) => {
+      //     this.isLoading = false;
+      //     console.log('error', error);
+      //   });
+
       // window.open('http://localhost:3300/users/auth/google', 'mywindow', 'location=1,status=1,scrollbars=1, width=800,height=800');
       // const listener = window.addEventListener('message', (message) => {
       //   console.log('message', message);

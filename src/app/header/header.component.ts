@@ -1,6 +1,8 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { Subscription } from 'rxjs';
 import { AuthService } from '../auth/auth.service';
+import { Router } from '@angular/router';
+import { PostsService } from '../posts/posts.service';
 
 @Component({
   selector: 'app-header',
@@ -12,7 +14,10 @@ export class HeaderComponent implements OnInit, OnDestroy {
   public userSub: Subscription;
   public profileImageSub: Subscription;
   public profileImage = '../../assets/paperKit2/assets/img/no-avatar.jpg';
-  constructor(private authService: AuthService) { }
+  constructor(
+      private authService: AuthService,
+      private router: Router,
+      private postService: PostsService) { }
 
   ngOnInit(): void {
     this.userSub = this.authService.user.subscribe(user => {
@@ -27,6 +32,14 @@ export class HeaderComponent implements OnInit, OnDestroy {
   public onLogout(): void {
     this.authService.logout();
     this.profileImage = '../../assets/paperKit2/assets/img/no-avatar.jpg';
+  }
+
+  public onNewPost(): void {
+    this.router.navigate(['/new']);
+  }
+
+  public getAllFreshPosts(): void {
+    this.postService.getAllPosts().subscribe();
   }
 
   ngOnDestroy(): void {
