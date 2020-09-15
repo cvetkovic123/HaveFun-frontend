@@ -6,14 +6,20 @@ import { TrendingComponent } from './trending/trending.component';
 import { FreshComponent } from './fresh/fresh.component';
 import { NewComponent } from './new/new.component';
 import { FreshCommentComponent } from './fresh/freshComments/freshComment.component';
+import { TrendingCommentComponent } from './trending/trendingComments/trending.component';
+import { PopularCommentComponent } from './popular/popularComments/popularComment.component';
 
 const routes: Routes = [
     { path: '', component: PostsComponent, children: [
         { path: 'new', component:  NewComponent},
-        { path: 'popular', component: PopularComponent },
-        { path: 'trending', component: TrendingComponent },
+        { path: 'popular', component: PopularComponent, children: [
+            { path: '', component: PopularCommentComponent }
+        ] },
+        { path: 'trending', component: TrendingComponent, children: [
+            { path: '', component: TrendingCommentComponent }
+        ] },
         { path: 'fresh', component: FreshComponent, children: [
-            { path: ':id', component: FreshCommentComponent},
+            { path: '', component: FreshCommentComponent },
         ]}
     ]}
 ];

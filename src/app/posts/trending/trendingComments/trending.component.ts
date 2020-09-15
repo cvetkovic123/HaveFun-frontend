@@ -6,11 +6,11 @@ import { AuthService } from 'src/app/auth/auth.service';
 import { PostsService } from '../../posts.service';
 
 @Component({
-    selector: 'app-fresh-comment',
-    templateUrl: './freshComment.component.html',
-    styleUrls: ['./freshComment.component.scss']
+    selector: 'app-trending-comment',
+    templateUrl: './trending.component.html',
+    styleUrls: ['./trending.component.scss']
 })
-export class FreshCommentComponent implements OnInit, OnChanges, OnDestroy {
+export class TrendingCommentComponent implements OnInit, OnChanges, OnDestroy {
     @Input() comments: any;
     // public commentHolder: any;
     public comment: any;
@@ -29,6 +29,7 @@ export class FreshCommentComponent implements OnInit, OnChanges, OnDestroy {
         private authService: AuthService,
         private postService: PostsService,
         private router: Router) {}
+
     ngOnInit(): void {
 
         // console.log('input comments', this.comments);
@@ -37,12 +38,11 @@ export class FreshCommentComponent implements OnInit, OnChanges, OnDestroy {
             this.token = user._token;
         });
 
-        this.commentSubscription = this.postService.commentsChanged.subscribe((result) => {
+        this.commentSubscription = this.postService.trendingCommentsChanged.subscribe((result) => {
             console.log('result comments changed', result);
             this.comment = result;
         });
     }
-
 
     ngOnChanges(): void {
         if (!this.comments) {
@@ -59,10 +59,11 @@ export class FreshCommentComponent implements OnInit, OnChanges, OnDestroy {
         if (this.newCommentAdded) {
             return;
         }
-        if (this.router.url !== '/fresh') {
+        console.log(this.router.url !== '/fresh');
+        if (this.router.url !== '/trending') {
             return;
         }
-        this.postService.commentsChanged.subscribe((result) => {
+        this.postService.trendingCommentsChanged.subscribe((result) => {
             console.log('result comments changed', result);
             console.log('postsId', this.postsId);
             console.log('-----------------------------------------------');
@@ -121,5 +122,4 @@ export class FreshCommentComponent implements OnInit, OnChanges, OnDestroy {
         this.commentSubscription.unsubscribe();
         this.userSubscription.unsubscribe();
     }
-
 }

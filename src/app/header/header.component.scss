@@ -7,6 +7,8 @@ img {
     height: 40px;
 }
 
+
+
 #navbarDropdown::after {
     display: none;
 }
@@ -15,6 +17,20 @@ img {
     .moveButtonLeft {
         font-weight: bold;
         position: relative;
-        right: 110px;
+        right: 100px;
     }
+
+    #navbarDropdown {
+        position: relative;
+        right: 30px;
+    }
+    
 }
+
+// @media screen and (max-width: )
+
+
+.navbar-collapse ul {
+    height: auto !important;
+}
+

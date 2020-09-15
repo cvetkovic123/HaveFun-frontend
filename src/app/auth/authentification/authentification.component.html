@@ -50,6 +50,7 @@
                         [(ngModel)]="user.name"
                         name="name" 
                         required
+                        (keydown.space)="$event.preventDefault();"
                         #name="ngModel"
                         class="form-control"
                         placeholder="Name">
@@ -66,6 +67,7 @@
                         [(ngModel)]="user.email"
                         name="email" 
                         required
+                        (keydown.space)="$event.preventDefault();"
                         email
                         #email="ngModel"
                         class="form-control"
@@ -84,6 +86,7 @@
                         [(ngModel)]="user.password"
                         required
                         #password="ngModel"
+                        (keydown.space)="$event.preventDefault();"
                         class="form-control" 
                         placeholder="Password">
                         <span
@@ -99,6 +102,7 @@
                         id="confirmPassword"
                         class="form-control"
                         name="confirmPassword"
+                        (keydown.space)="$event.preventDefault();"
                         [(ngModel)]="user.confirmPassword"
                         appConfirmEqualValidator="password"
                         confirmPassword
@@ -167,6 +171,7 @@
                   value=""
                   required
                   ngModel
+                  (keydown.space)="$event.preventDefault();"
                   #email="ngModel"
                   placeholder="Email"
                   class="form-control">
@@ -234,6 +239,7 @@
                       value=""
                       required
                       ngModel
+                      (keydown.space)="$event.preventDefault();"
                       #email="ngModel"
                       placeholder="Email" 
                       class="form-control"/>
@@ -249,6 +255,7 @@
                       value="" 
                       ngModel
                       required
+                      (keydown.space)="$event.preventDefault();"
                       #password="ngModel"
                       placeholder="Password" 
                       class="form-control"/>

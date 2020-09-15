@@ -22,6 +22,7 @@ export class HeaderComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
     this.userSub = this.authService.user.subscribe(user => {
       // console.log(user._token);
+      console.log(!!user);
       this.isAuthenticated = !!user;
     });
     this.profileImageSub = this.authService.profileImage.subscribe(image => {
@@ -39,8 +40,14 @@ export class HeaderComponent implements OnInit, OnDestroy {
   }
 
   public getAllFreshPosts(): void {
-    this.postService.getAllPosts().subscribe();
+    this.postService.getAllFreshPosts().subscribe();
   }
+
+  public getAllTrendingPosts(): void {
+    this.postService.getAllTrendingPosts().subscribe();
+  }
+
+
 
   ngOnDestroy(): void {
     this.userSub.unsubscribe();

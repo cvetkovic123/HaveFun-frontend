@@ -23,13 +23,11 @@
         </div>
     </div>
 </form>
-
 <div *ngIf="isLoading" style="text-align: center;">
     <app-loading-spinner></app-loading-spinner>
-</div>
-
+  </div>
 <div class="container" *ngIf="!isLoading">
-    <cdk-virtual-scroll-viewport style="height: 500px;" itemSize="20">
+    <cdk-virtual-scroll-viewport style="height: 500px" itemSize="20">
         <div class="row" *cdkVirtualFor="let postComment of comment">
             <div class="col-md-2">
                 <img

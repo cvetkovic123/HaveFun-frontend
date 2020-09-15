@@ -79,6 +79,7 @@
                                 class="form-control"
                                 minlength="5"
                                 maxlength="25"
+                                (keydown.space)="$event.preventDefault();"
                                 pattern="[^()/><\][\\\x22,;|]+"
                                 #editName="ngModel"
                                 required
@@ -134,6 +135,7 @@
                                 name="oldPassword"
                                 required
                                 ngModel
+                                (keydown.space)="$event.preventDefault();"
                                 minlength="5"
                                 maxlength="25"
                                 #oldPassword="ngModel"
@@ -152,6 +154,7 @@
                                 name="newPassword"
                                 required
                                 ngModel
+                                (keydown.space)="$event.preventDefault();"
                                 minlength="5"
                                 maxlength="25"
                                 #newPassword="ngModel"
@@ -170,6 +173,7 @@
                                 name="confirmNewPassword"
                                 required
                                 ngModel
+                                (keydown.space)="$event.preventDefault();"
                                 minlength="5"
                                 maxlength="25"
                                 appConfirmEqualValidator="newPassword"
