@@ -20,7 +20,7 @@
                                 &nbsp;
                                 <button
                                     class="btn btn-light"
-                                    (click)="getComments(post)">
+                                    (click)="toFreshComments(post)">
                                     <i class="nc-icon nc-chat-33"></i>
                                 </button>
                                 <!-- &nbsp;
@@ -35,10 +35,8 @@
                 </div>
             </cdk-virtual-scroll-viewport>
         </div>
-        <div class="col-md-4">
-            <app-fresh-comment
-                *ngIf="isComments"
-                [comments]="comments"></app-fresh-comment>
+        <div class="col-md-4" *ngIf="commentsLoaded">
+            <app-fresh-comment></app-fresh-comment>
         </div>
     </div>
 </div>

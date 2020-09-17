@@ -3,6 +3,7 @@ import { Subscription } from 'rxjs';
 import { AuthService } from '../auth.service';
 import { NgForm } from '@angular/forms';
 import { Router } from '@angular/router';
+import { User } from '../user.model';
 
 
 @Component({
@@ -38,6 +39,7 @@ export class ProfileComponent implements OnInit, OnDestroy {
         ngOnInit(): void {
 
             this.userSub = this.authService.user.subscribe(user => {
+                console.log('user from profile', user);
                 if (user !== null) {
                     this.email = user.email;
                     this.name = user.name;
@@ -73,7 +75,24 @@ export class ProfileComponent implements OnInit, OnDestroy {
                 return;
             }
             this.authService.editName(this.name, this._token)
-                .subscribe(() => {});
+                .subscribe((result) => {
+                    console.log('new name', result);
+                    const editedNameLocalStorage = JSON.parse(localStorage.getItem('userData'));
+                    console.log(editedNameLocalStorage);
+                    console.log('editedNameLocalStorage', editedNameLocalStorage);
+                    const user = new User(
+                        editedNameLocalStorage.iss,
+                        editedNameLocalStorage.sub,
+                        (result as any).message, // new name
+                        editedNameLocalStorage.email,
+                        editedNameLocalStorage._token,
+                        editedNameLocalStorage._tokenExpirationDate
+                    );
+                    console.log(user);
+                    localStorage.removeItem('userData');
+                    this.authService.user.next(user);
+                    localStorage.setItem('userData', JSON.stringify(user));
+                });
         }
 
         public onChangePassword(form: NgForm): void {

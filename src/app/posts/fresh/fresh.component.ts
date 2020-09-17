@@ -5,6 +5,7 @@ import { Post } from '../post.model';
 import * as jwt_decode from 'jwt-decode';
 import { Subscription } from 'rxjs';
 import { Comments } from '../comments.model';
+import { Router } from '@angular/router';
 
 
 @Component({
@@ -13,24 +14,22 @@ import { Comments } from '../comments.model';
   styleUrls: ['./fresh.component.scss']
 })
 export class FreshComponent implements OnInit, OnDestroy {
-  public upvoteClass = 'btn btn-light';
   public token: string;
   public isUpvoted = false;
-  public isDownvoted = false;
   public isSignedIn = false;
   public userId: string;
-  public postsLiked;
+  public postsLiked: any;
   public freshPosts: any;
-  public userSubscription: Subscription;
-  public postSubscription: Subscription;
-  public comments: Comments[] = [];
-  public isComments = false;
+  private userSubscription: Subscription;
+  public commentsLoaded = false;
 
   constructor(
     private postService: PostsService,
-    private authService: AuthService) { }
+    private authService: AuthService,
+    private router: Router) { }
 
   ngOnInit(): void {
+    // check if user is logged in
     this.userSubscription = this.authService.user.subscribe(result => {
       // console.log('user credentials result', result);
       if (!result) {
@@ -41,25 +40,30 @@ export class FreshComponent implements OnInit, OnDestroy {
 
       this.isSignedIn = true;
 
+
       this.postService.postsChanged
         .subscribe((resultPostChanged: Post[]) => {
-          // console.log('is null', resultPostChanged);
+          if (!resultPostChanged) {
+            return;
+          }
+          console.log('post', resultPostChanged);
           this.postsLiked = this.makeSimplerIfLikedOrNotObject(resultPostChanged);
-          // console.log('postsLiked', this.postsLiked);
+          if (this.postsLiked) {
+            console.log(this.postsLiked);
+          }
           this.freshPosts = resultPostChanged;
         });
 
 
       console.log('posts slice current', this.postService.getAllFreshPostsSlice());
       if (this.postService.getAllFreshPostsSlice().length === 0) {
-        console.log('true');
         this.postService.getAllFreshPosts()
         .subscribe(() => {
         }, error => {
           console.log('error', error);
         });
       } else {
-        // this.freshPosts = this.postService.getAllPostsSlice();
+        // display no posts yet in fresh
       }
     });
 
@@ -107,17 +111,12 @@ export class FreshComponent implements OnInit, OnDestroy {
     return newData;
   }
 
-  public getComments(data) {
-    this.isComments = true;
-    console.log('post which i clicked', data);
 
-    this.postService.getAllCommentsForThisPost(data._id, this.token)
-      .subscribe(result => {
-        console.log('result', result);
-        this.comments = (result as any).message;
-      }, error => {
-        console.log('error', error);
-      });
+
+  public toFreshComments(post) {
+    const postId = post ? post._id : null;
+    this.commentsLoaded = true;
+    this.router.navigate([ '/fresh', { id: postId } ]);
   }
 
 

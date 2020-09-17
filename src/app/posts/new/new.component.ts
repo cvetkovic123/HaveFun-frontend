@@ -5,6 +5,7 @@ import { PostsService } from '../posts.service';
 import { Subscription } from 'rxjs';
 import { Post } from '../post.model';
 import { User } from 'src/app/auth/user.model';
+import { Router } from '@angular/router';
 
 @Component({
     selector: 'app-new-post',
@@ -22,7 +23,10 @@ export class NewComponent implements OnInit, OnDestroy {
     public imgURL: any;
     public message: string;
 
-    constructor(private authService: AuthService, private postService: PostsService) {}
+    constructor(
+        private authService: AuthService,
+        private postService: PostsService,
+        private router: Router) {}
 
     ngOnInit() {
         this.userSub = this.authService.user.subscribe((result: User) => {
@@ -43,6 +47,9 @@ export class NewComponent implements OnInit, OnDestroy {
             .subscribe(result => {
                 this.isLoading = false;
                 console.log('result', result);
+                setTimeout(() => {
+                    this.router.navigate(['/fresh']);
+                }, 200);
             }, error => {
                 this.isLoading = false;
                 console.log('error', error);

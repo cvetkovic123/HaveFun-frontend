@@ -1,5 +1,5 @@
 <br>
-<h2 class="text-center">Comments</h2>
+<h2 class="text-center">{{postTitle}}</h2>
 
 <form
     #addNewComment="ngForm"
@@ -15,7 +15,7 @@
                 id="comment"
                 name="comment"
                 required
-                [(ngModel)]="newComment"
+                ngModel
                 minlength="1"
                 maxlength="400"
                 class="form-control"
@@ -30,7 +30,7 @@
 
 <div class="container" *ngIf="!isLoading">
     <cdk-virtual-scroll-viewport style="height: 500px;" itemSize="20">
-        <div class="row" *cdkVirtualFor="let postComment of comment">
+        <div class="row" *cdkVirtualFor="let postComment of comments">
             <div class="col-md-2">
                 <img
                     class="img-round" 

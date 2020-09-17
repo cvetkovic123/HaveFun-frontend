@@ -1,6 +1,6 @@
 import { Component, Input, OnChanges, OnDestroy, OnInit } from '@angular/core';
 import { NgForm } from '@angular/forms';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { Subscription } from 'rxjs';
 import { AuthService } from 'src/app/auth/auth.service';
 import { PostsService } from '../../posts.service';
@@ -10,117 +10,75 @@ import { PostsService } from '../../posts.service';
     templateUrl: './popularComment.component.html',
     styleUrls: ['./popularComment.component.scss']
 })
-export class PopularCommentComponent implements OnInit, OnChanges, OnDestroy {
-    @Input() comments: any;
-    // public commentHolder: any;
-    public comment: any;
+export class PopularCommentComponent implements OnInit, OnDestroy {
+    public comments: any;
     public name: string;
-    public newComment: string;
-    public isLoading = false;
+    public postTitle: string;
+    public isLoading = true;
     public token: string;
-    public postsId: string;
-    public newCommentAdded = false;
-    public postsIdWhichStaysAfterFirstCommentGetsPushed: string;
-    public ifPostExists: boolean;
-    public commentSubscription: Subscription;
-    public userSubscription: Subscription;
+    public postId: string;
 
+    private userSubscription: Subscription;
     constructor(
         private authService: AuthService,
         private postService: PostsService,
-        private router: Router
+        private route: ActivatedRoute
     ) {}
 
     ngOnInit(): void {
-
-        // console.log('input comments', this.comments);
         this.userSubscription = this.authService.user.subscribe(user => {
-            this.name = user.name;
             this.token = user._token;
+            this.name = user.name;
         });
 
-        this.commentSubscription = this.postService.popularCommentsChanged.subscribe((result) => {
-            console.log('result comments changed', result);
-            this.comment = result;
+
+        this.route.paramMap.subscribe(params => {
+            console.log(params);
+            const postId = params.get('id');
+
+            this.postId = postId;
+            this.getComments(postId);
         });
-    }
 
-    ngOnChanges(): void {
-        if (!this.comments) {
-            return;
-        }
-        console.log('comments', this.comments);
-        this.postsId = this.comments.postsId;
-        this.comment = (this.comments as any).comments;
-        console.log('onLoad comments ngOnChanges', this.comment);
 
-        // if (!this.comment) {
-        //     this.postsId = (this.comments)._id;
-        // }
-        if (this.newCommentAdded) {
-            return;
-        }
-        console.log(this.router.url !== '/fresh');
-        if (this.router.url !== '/trending') {
-            return;
-        }
-        this.postService.popularCommentsChanged.subscribe((result) => {
-            console.log('result comments changed', result);
-            console.log('postsId', this.postsId);
-            console.log('-----------------------------------------------');
+        this.postService.commentsChanged.subscribe(result => {
             if (!result) {
                 return;
             }
-            // if (this.comments !== this.postsId) {
-            //     return;
-            // }
-            // if (!(result as any).postsId) {
-            //     return;
-            // }
-            this.comment = result;
+            console.log('popularCommentsChanged', result);
+            this.isLoading = false;
+            this.comments = result;
         });
+
     }
+
+
+
 
     public onAddNewComment(form: NgForm): void {
         if (!form.valid) {
             return;
         }
-        console.log(form);
-        const newComment = form.value.comment;
-        console.log('this.comments.postsId', this.comments);
-        console.log('new comment', newComment);
-        console.log('token', this.token);
-        this.postService.ifPostExists(this.comments._id, this.token)
-            .subscribe((result => {
-                console.log('result of ifPostExists', result);
-                this.ifPostExists = (result as any).message;
+        const newComment = form.value.comment.toString().trim();
 
+        this.postService.addNewCommentForThisPost(this.postId, newComment, this.token)
+            .subscribe();
+        form.reset();
 
-                console.log('does ITITIT?!?!', this.ifPostExists);
-                if (this.ifPostExists) {
-                    this.postsId = this.comments._id;
-                } else {
-                    this.postsId = this.comments.postsId;
-                }
-                if (this.postsId) {
-                    this.postsIdWhichStaysAfterFirstCommentGetsPushed = this.postsId;
-                }
-                if (!this.postsId) {
-                    this.postsId = this.postsIdWhichStaysAfterFirstCommentGetsPushed;
-                }
-                this.postService.addNewCommentForThisPost(this.postsId, newComment, this.token)
-                    .subscribe();
-                this.newCommentAdded = true;
-                form.reset();
-            }), error => {
-                console.log('error of ifPostExists', error);
-            });
+    }
 
+    public getComments(id: string) {
+        if (!id) {
+            return;
+        }
+        console.log('getPostComment', id);
+        this.postService.getAllCommentsForThisPost(id, this.token)
+            .subscribe();
     }
 
 
     ngOnDestroy(): void {
-        this.commentSubscription.unsubscribe();
         this.userSubscription.unsubscribe();
     }
+
 }

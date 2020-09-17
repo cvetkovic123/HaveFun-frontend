@@ -1,0 +1,9 @@
+"filename", "language", "SCSS", "TypeScript", "HTML", "comment", "blank", "total"
+"/home/bojan/codeStuff/MATURSKI2.0/frontend/HaveFun/src/app/posts/fresh/fresh.component.html", "HTML", 0, 0, 37, 7, 1, 45
+"/home/bojan/codeStuff/MATURSKI2.0/frontend/HaveFun/src/app/posts/fresh/fresh.component.scss", "SCSS", 8, 0, 0, 0, 1, 9
+"/home/bojan/codeStuff/MATURSKI2.0/frontend/HaveFun/src/app/posts/fresh/fresh.component.spec.ts", "TypeScript", 0, 20, 0, 0, 6, 26
+"/home/bojan/codeStuff/MATURSKI2.0/frontend/HaveFun/src/app/posts/fresh/fresh.component.ts", "TypeScript", 0, 96, 0, 13, 19, 128
+"/home/bojan/codeStuff/MATURSKI2.0/frontend/HaveFun/src/app/posts/fresh/freshComments/freshComment.component.html", "HTML", 0, 0, 48, 0, 3, 51
+"/home/bojan/codeStuff/MATURSKI2.0/frontend/HaveFun/src/app/posts/fresh/freshComments/freshComment.component.scss", "SCSS", 17, 0, 0, 0, 2, 19
+"/home/bojan/codeStuff/MATURSKI2.0/frontend/HaveFun/src/app/posts/fresh/freshComments/freshComment.component.ts", "TypeScript", 0, 100, 0, 11, 15, 126
+"Total", "-", 25, 216, 85, 31, 47, 404

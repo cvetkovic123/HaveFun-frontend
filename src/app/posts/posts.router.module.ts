@@ -13,13 +13,16 @@ const routes: Routes = [
     { path: '', component: PostsComponent, children: [
         { path: 'new', component:  NewComponent},
         { path: 'popular', component: PopularComponent, children: [
-            { path: '', component: PopularCommentComponent }
+            { path: '', redirectTo: '', pathMatch: 'full' },
+            { path: ':id', component: PopularCommentComponent }
         ] },
         { path: 'trending', component: TrendingComponent, children: [
-            { path: '', component: TrendingCommentComponent }
+            { path: '', redirectTo: '', pathMatch: 'full' },
+            { path: ':id', component: TrendingCommentComponent }
         ] },
         { path: 'fresh', component: FreshComponent, children: [
-            { path: '', component: FreshCommentComponent },
+            { path: '', redirectTo: '', pathMatch: 'full' },
+            { path: ':id', component: FreshCommentComponent },
         ]}
     ]}
 ];

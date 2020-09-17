@@ -1,4 +1,5 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Router } from '@angular/router';
 import { Subscription } from 'rxjs';
 import { AuthService } from 'src/app/auth/auth.service';
 import { Comments } from '../comments.model';
@@ -11,24 +12,22 @@ import { PostsService } from '../posts.service';
   styleUrls: ['./trending.component.scss']
 })
 export class TrendingComponent implements OnInit, OnDestroy {
-  public upvoteClass = 'btn btn-light';
   public token: string;
   public isUpvoted = false;
-  public isDownvoted = false;
   public isSignedIn = false;
   public userId: string;
   public postsLiked: any;
   public trendingPosts: any;
-  public userSubscription: Subscription;
-  public postSubscription: Subscription;
-  public comments: Comments[] = [];
-  public isComments = false;
+  private userSubscription: Subscription;
+  public commentsLoaded = false;
 
   constructor(
     private postService: PostsService,
-    private authService: AuthService) { }
+    private authService: AuthService,
+    private router: Router) { }
 
-  ngOnInit() {
+  ngOnInit(): void {
+    // check if user is logged in
     this.userSubscription = this.authService.user.subscribe(result => {
       // console.log('user credentials result', result);
       if (!result) {
@@ -39,29 +38,37 @@ export class TrendingComponent implements OnInit, OnDestroy {
 
       this.isSignedIn = true;
 
+
       this.postService.postsChanged
         .subscribe((resultPostChanged: Post[]) => {
-          // console.log('is null', resultPostChanged);
+          if (!resultPostChanged) {
+            return;
+          }
+          console.log('post', resultPostChanged);
           this.postsLiked = this.makeSimplerIfLikedOrNotObject(resultPostChanged);
-          // console.log('postsLiked', this.postsLiked);
+          if (this.postsLiked) {
+            console.log(this.postsLiked);
+          }
           this.trendingPosts = resultPostChanged;
         });
 
 
       console.log('posts slice current', this.postService.getAllTrendingPostsSlice());
       if (this.postService.getAllTrendingPostsSlice().length === 0) {
-        console.log('true');
         this.postService.getAllTrendingPosts()
-        .subscribe((trendingResult) => {
-          console.log('trending result', trendingResult);
+        .subscribe(() => {
         }, error => {
           console.log('error', error);
         });
       } else {
-        // this.trendingPosts = this.postService.getAllPostsSlice();
+        // display no posts yet in fresh
       }
     });
+
+
+
   }
+
 
   public onUpvote(index: number): void {
     if (!this.isSignedIn) {
@@ -102,22 +109,16 @@ export class TrendingComponent implements OnInit, OnDestroy {
     return newData;
   }
 
-  public getComments(data) {
-    this.isComments = true;
-    console.log('post which i clicked', data);
 
-    this.postService.getAllCommentsForThisPost(data._id, this.token)
-      .subscribe(result => {
-        console.log('result', result);
-        this.comments = (result as any).message;
-      }, error => {
-        console.log('error', error);
-      });
+
+  public toTrendingComments(post) {
+    const postId = post ? post._id : null;
+    this.commentsLoaded = true;
+    this.router.navigate([ '/trending', { id: postId } ]);
   }
 
 
   ngOnDestroy(): void {
     this.userSubscription.unsubscribe();
   }
-
 }

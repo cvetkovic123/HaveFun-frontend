@@ -16,12 +16,6 @@ export class PostsService {
     public postsChanged = new BehaviorSubject<Post[]>(null);
     public commentsChanged = new BehaviorSubject<Comments[]>(null);
 
-    // public trendingPostsChanged = new BehaviorSubject<Post[]>(null);
-    public trendingCommentsChanged = new BehaviorSubject<Comments[]>(null);
-
-    // public popularPostsChanged = new BehaviorSubject<Post[]>(null);
-    public popularCommentsChanged = new BehaviorSubject<Comments[]>(null);
-
     private posts: Post[] = [];
     private trendingPosts: Post[] = [];
     private popularPosts: Post[] = [];
@@ -65,6 +59,32 @@ export class PostsService {
         return this.http.get(environment.api_key + '/posts/getAllFreshPosts')
             .pipe(
                 tap((posts: Post) => {
+                    this.posts = (posts as any).message;
+                    console.log('posts tap', posts);
+                    this.postsChanged.next(this.posts.slice());
+                }),
+                catchError(this.handleError)
+            );
+    }
+    // get All Trending posts
+
+    public getAllTrendingPosts() {
+        return this.http.get(environment.api_key + '/posts/getAllTrendingPosts')
+            .pipe(
+                tap((posts: Post) => {
+                    console.log(this.router.url);
+                    this.posts = (posts as any).message;
+                    this.postsChanged.next(this.posts.slice());
+                }),
+                catchError(this.handleError)
+            );
+    }
+    // get All popular posts
+
+    public getAllPopularPosts() {
+        return this.http.get(environment.api_key + '/posts/getAllPopularPosts')
+            .pipe(
+                tap((posts: Post) => {
                     // console.log('posts tap', posts);
                     this.posts = (posts as any).message;
                     this.postsChanged.next(this.posts.slice());
@@ -85,32 +105,6 @@ export class PostsService {
         return this.popularPosts.slice();
     }
 
-    // get All Trending posts
-
-    public getAllTrendingPosts() {
-        return this.http.get(environment.api_key + '/posts/getAllTrendingPosts')
-            .pipe(
-                tap((posts: Post) => {
-                    console.log(this.router.url);
-                    this.posts = (posts as any).message;
-                    this.postsChanged.next(this.posts.slice());
-                }),
-                catchError(this.handleError)
-            );
-    }
-
-
-    public getAllPopularPosts() {
-        return this.http.get(environment.api_key + '/posts/getAllPopularPosts')
-            .pipe(
-                tap((posts: Post) => {
-                    // console.log('posts tap', posts);
-                    this.posts = (posts as any).message;
-                    this.postsChanged.next(this.posts.slice());
-                }),
-                catchError(this.handleError)
-            );
-    }
 
 
     // upvote
@@ -143,8 +137,9 @@ export class PostsService {
                 authorization: token
             }),
         }).pipe(
-                tap((comments) => {
+                tap((comments: Comments) => {
                     console.log('comments', comments);
+                    this.commentsChanged.next((comments as any).message.comments);
                 }),
                 catchError(this.handleError)
         );
@@ -162,20 +157,7 @@ export class PostsService {
             })
         }).pipe(
             tap((editedComments: Comments[]) => {
-                console.log('editedComments', editedComments);
                 this.comments = (editedComments as any).message;
-                console.log('private comments', this.comments);
-                console.log(this.router.url);
-                switch (this.router.url) {
-                    case '/fresh':
-                        this.commentsChanged.next((this.comments as any).comments.slice());
-                        break;
-                    case '/trending':
-                        this.trendingCommentsChanged.next((this.comments as any).comments.slice());
-                        break;
-                    case '/popular':
-                        this.popularCommentsChanged.next((this.comments as any).comments.slice());
-                }
                 this.commentsChanged.next((this.comments as any).comments.slice());
             }),
             catchError(this.handleError)
